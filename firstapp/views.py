@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from .models import *
 from rest_framework.views import APIView
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView,ListAPIView,ListCreateAPIView
 
 def homeView(request):
     return render(request,'index.html')
@@ -139,3 +139,9 @@ class PostCreateAPIView(CreateAPIView):
         headers = self.get_success_headers(serializer.data)
         serializer=PostDetailSerializer(instance=instance,many=False)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    
+class PostListAPIView(ListAPIView):
+    permission_classes=[IsAuthenticated]
+    queryset=BlogPost.objects.all()
+    serializer_class = PostDetailSerializer
+
