@@ -1,3 +1,4 @@
+from .serializers import ContactSerializer, ContactForm, ContactSerializerOne
 from rest_framework.response import Response
 from rest_framework.decorators import api_view,permission_classes
 from django.shortcuts import render
@@ -5,6 +6,8 @@ from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from .models import *
 from rest_framework.views import APIView
+from rest_framework.generics import CreateAPIView
+
 def homeView(request):
     return render(request,'index.html')
 
@@ -66,7 +69,7 @@ def contactPost(request):
     
 # Class based view 
 
-from .serializers import ContactSerializer,ContactForm
+# Model Serializer 
 class ContactAPIView(APIView):
     permission_classes=[AllowAny,]
     def post(self,request,format=None):
@@ -98,3 +101,26 @@ class ContactAPIView(APIView):
         queryset=Contact.objects.all()
         serializer=ContactSerializer(queryset,many=True)
         return Response(serializer.data)
+    
+# Serializer 
+class ContactAPIViewOne(APIView):
+    permission_classes=[AllowAny,]
+    def post(self,request,format=None):
+        serializer = ContactSerializerOne(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+
+        return Response(serializer.data)
+    def put(self,request,format=None):
+        contact=Contact.objects.get(id=1)
+        serializer = ContactSerializerOne(data=request.data,instance=contact)
+        if serializer.is_valid():
+            serializer.save()
+
+        return Response(serializer.data)
+
+    def get(self, request, format=None):
+        queryset = Contact.objects.all()
+        serializer = ContactSerializerOne(queryset, many=True)
+        return Response(serializer.data)
+
