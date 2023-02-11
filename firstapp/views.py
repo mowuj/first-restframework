@@ -66,18 +66,35 @@ def contactPost(request):
     
 # Class based view 
 
+from .serializers import ContactSerializer,ContactForm
 class ContactAPIView(APIView):
     permission_classes=[AllowAny,]
     def post(self,request,format=None):
-        data=request.data
-        name = data['name']
-        email=data['email']
-        subject=data['subject']
-        phone=data['phone']
-        details=data['details']
+        # data=request.data    
+            # simple data get 
 
-        contact=Contact(name=name,email=email,subject=subject,phone=phone,details=details)
-        contact.save()
-        return Response({"Success":"Successfully Saved.."})
+        # name = data['name']
+        # email=data['email']
+        # subject=data['subject']
+        # phone=data['phone']
+        # details=data['details']
+
+        # contact=Contact(name=name,email=email,subject=subject,phone=phone,details=details)
+        # contact.save()
+
+            # form get data 
+        # from =ContactForm(request.POST)
+        # if form.is_valid():
+        #     form.save()
+
+        # serializer get data 
+
+        serializer=ContactSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+
+        return Response(serializer.data)
     def get(self,request,format=None):
-        return Response({"Success":"This is from get.."})
+        queryset=Contact.objects.all()
+        serializer=ContactSerializer(queryset,many=True)
+        return Response(serializer.data)
