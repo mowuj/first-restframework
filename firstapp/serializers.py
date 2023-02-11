@@ -33,3 +33,14 @@ class ContactSerializerOne(serializers.Serializer):
         instance.details=validated_data.get('details',instance.details)
         instance.save()
         return instance
+class PostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=BlogPost
+        # fields="__all__"
+        exclude=['user','is_active']
+
+class PostDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BlogPost
+        fields="__all__"
+        # exclude = ['user', 'is_active']
