@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from .models import *
 from rest_framework.views import APIView
-from rest_framework.generics import CreateAPIView,ListAPIView,ListCreateAPIView,RetrieveAPIView,UpdateAPIView,RetrieveUpdateAPIView
+from rest_framework.generics import CreateAPIView,ListAPIView,ListCreateAPIView,RetrieveAPIView,UpdateAPIView,RetrieveUpdateAPIView,DestroyAPIView,RetrieveUpdateDestroyAPIView
 
 def homeView(request):
     return render(request,'index.html')
@@ -153,7 +153,7 @@ class PostCreateAPIView(ListCreateAPIView):
         return Response(serializer.data)
     # Query Set customize
     def get_queryset(self):
-        queryset=BlogPost.objects.filter(is_active=True)
+        queryset=BlogPost.objects.filter()
         return queryset
     # List API VIEW 
 # class PostListAPIView(ListAPIView):
@@ -172,7 +172,7 @@ class PostRetrieveAPIView(RetrieveAPIView):
         return Response(serializer.data)
 
 
-class PostUpdateAPIView(RetrieveUpdateAPIView):
+class PostUpdateAPIView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
     queryset = BlogPost.objects.filter(is_active=True)
     serializer_class = PostSerializer
@@ -197,5 +197,15 @@ class PostUpdateAPIView(RetrieveUpdateAPIView):
             # If 'prefetch_related' has been applied to a queryset, we need to
             # forcibly invalidate the prefetch cache on the instance.
             instance._prefetched_objects_cache = {}
-
         return Response(serializer.data)
+
+    def perform_destroy(self, instance):
+        instance.is_active=False
+        instance.save()
+
+# Delete API 
+# class PostDeleteAPIView(DestroyAPIView):
+#     permission_classes = [IsAuthenticated]
+#     queryset = BlogPost.objects.filter(is_active=True)
+#     serializer_class = PostSerializer
+#     lookup_field = 'id'

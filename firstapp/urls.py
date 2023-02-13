@@ -8,5 +8,6 @@ urlpatterns = [
     path('post/', PostCreateAPIView.as_view()),
     # path('post/<int:id>/', PostRetrieveAPIView.as_view()),
     path('post/<int:id>/', PostUpdateAPIView.as_view()),
+    # path('postdelete/<int:id>/', PostDeleteAPIView.as_view()),
     # path('postlist/', PostListAPIView.as_view()),
 ]
